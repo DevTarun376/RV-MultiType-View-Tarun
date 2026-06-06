@@ -2,15 +2,16 @@ package com.tech.multitypeview.viewholder
 
 import android.os.Bundle
 import androidx.recyclerview.widget.RecyclerView
-import com.tech.multitypeview.R
 import com.tech.multitypeview.adapter.PayloadKeys
 import com.tech.multitypeview.databinding.MtvItemSectionHeaderBinding
 import com.tech.multitypeview.model.MultiTypeItem
+import com.tech.multitypeview.ui.MultiTypeTheme
 
 // Single ViewHolder for both TECH_HEADER and ADMIN_HEADER — identical structure, label differs.
 internal class SectionHeaderViewHolder(
     val binding: MtvItemSectionHeaderBinding,
     private val label: String,
+    private val theme: MultiTypeTheme,
     private val itemAt: (Int) -> MultiTypeItem?,
     private val onExpandToggle: (MultiTypeItem) -> Unit
 ) : RecyclerView.ViewHolder(binding.root) {
@@ -25,6 +26,8 @@ internal class SectionHeaderViewHolder(
     fun bind(item: MultiTypeItem) {
         binding.model = item
         binding.labelText = label
+        binding.root.setBackgroundColor(theme.sectionHeaderBackground)
+        binding.tvText.setTextColor(theme.sectionLabelTextColor)
         setArrow(item)
     }
 
@@ -34,7 +37,7 @@ internal class SectionHeaderViewHolder(
 
     private fun setArrow(item: MultiTypeItem) {
         binding.ivExpand.setImageResource(
-            if (item.isExpanded == true) R.drawable.mtv_ic_arrow_down else R.drawable.mtv_ic_arrow_up
+            if (item.isExpanded == true) theme.iconArrowExpanded else theme.iconArrowCollapsed
         )
     }
 }

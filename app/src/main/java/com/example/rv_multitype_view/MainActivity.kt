@@ -1,5 +1,6 @@
 package com.example.rv_multitype_view
 
+import android.graphics.Color
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -11,6 +12,8 @@ import com.tech.multitypeview.adapter.MultiTypeAdapterCallback
 import com.tech.multitypeview.model.MultiTypeItem
 import com.tech.multitypeview.ui.MultiTypeConfig
 import com.tech.multitypeview.ui.MultiTypeRecyclerManager
+import com.tech.multitypeview.ui.MultiTypeTheme
+import androidx.core.graphics.toColorInt
 
 class MainActivity : AppCompatActivity(), MultiTypeAdapterCallback {
 
@@ -25,7 +28,16 @@ class MainActivity : AppCompatActivity(), MultiTypeAdapterCallback {
         setSupportActionBar(binding.toolbar)
         supportActionBar?.title = "MultiTypeView Demo"
 
-        adapter = MultiTypeAdapter(listener = this)
+        adapter = MultiTypeAdapter(
+            listener = this,
+            theme = MultiTypeTheme(
+                itemBackground        = "#E8F0FE".toColorInt(), // cascades to listBackground + all rows
+                ticketNumberTextColor = "#1A73E8".toColorInt(),
+                headerTextColor       = "#555555".toColorInt(),
+                sectionLabelTextColor = "#222222".toColorInt(),
+                gridCardBackground    = Color.WHITE,
+            ),
+        )
         manager = MultiTypeRecyclerManager(
             context = this,
             recyclerView = binding.recyclerView,
@@ -49,7 +61,13 @@ class MainActivity : AppCompatActivity(), MultiTypeAdapterCallback {
 
     override fun onItemClick(position: Int, list: List<MultiTypeItem>) {
         val item = list.getOrNull(position)
-        toast("Opened item ${position + 1} of ${list.size} — ${item?.picLocation?.substringAfterLast("/")}")
+        toast(
+            "Opened item ${position + 1} of ${list.size} — ${
+                item?.picLocation?.substringAfterLast(
+                    "/"
+                )
+            }"
+        )
     }
 
     override fun onAdminItemClick(position: Int, list: List<MultiTypeItem>) {

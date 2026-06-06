@@ -38,6 +38,7 @@ class MultiTypeRecyclerManager(
         setupLayoutManager()
         setupScrollListener()
         recyclerView.itemAnimator = null
+        recyclerView.setBackgroundColor(adapter.theme.listBackground)
         setupScrollbar()
     }
 

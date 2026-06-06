@@ -15,13 +15,15 @@ import com.tech.multitypeview.databinding.MtvItemTicketNumberBinding
 import com.tech.multitypeview.model.MultiTypeItem
 import com.tech.multitypeview.model.MultiViewType
 import com.tech.multitypeview.model.MediaKind
+import com.tech.multitypeview.ui.MultiTypeTheme
 import com.tech.multitypeview.viewholder.GridViewHolder
 import com.tech.multitypeview.viewholder.HeaderViewHolder
 import com.tech.multitypeview.viewholder.SectionHeaderViewHolder
 import com.tech.multitypeview.viewholder.TicketNumberViewHolder
 
 class MultiTypeAdapter(
-    var listener: MultiTypeAdapterCallback? = null
+    var listener: MultiTypeAdapterCallback? = null,
+    val theme: MultiTypeTheme = MultiTypeTheme(),
 ) : ListAdapter<MultiTypeItem, RecyclerView.ViewHolder>(MultiTypeDiffCallback) {
 
     // ── Companion — backward-compatible view-type constants ───────────────────
@@ -89,26 +91,31 @@ class MultiTypeAdapter(
         return when (viewType) {
             MultiViewType.TICKET_NUMBER -> TicketNumberViewHolder(
                 binding = MtvItemTicketNumberBinding.inflate(inflater, parent, false),
+                theme = theme,
                 itemAt = ::safeGetItem,
                 onExpandToggle = ::handleExpandToggle
             )
             MultiViewType.HEADER -> HeaderViewHolder(
-                binding = MtvItemHeaderBinding.inflate(inflater, parent, false)
+                binding = MtvItemHeaderBinding.inflate(inflater, parent, false),
+                theme = theme,
             )
             MultiViewType.TECH_HEADER -> SectionHeaderViewHolder(
                 binding = MtvItemSectionHeaderBinding.inflate(inflater, parent, false),
                 label = parent.context.getString(R.string.mtv_tech_items),
+                theme = theme,
                 itemAt = ::safeGetItem,
                 onExpandToggle = ::handleExpandToggle
             )
             MultiViewType.ADMIN_HEADER -> SectionHeaderViewHolder(
                 binding = MtvItemSectionHeaderBinding.inflate(inflater, parent, false),
                 label = parent.context.getString(R.string.mtv_admin_items),
+                theme = theme,
                 itemAt = ::safeGetItem,
                 onExpandToggle = ::handleExpandToggle
             )
             MultiViewType.GRID -> GridViewHolder(
                 binding = MtvItemGridBinding.inflate(inflater, parent, false),
+                theme = theme,
                 itemAt = ::safeGetItem,
                 isDeleteEnabled = { enableDelete },
                 onGridClick = ::handleGridItemClick,

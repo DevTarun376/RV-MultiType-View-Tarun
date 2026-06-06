@@ -1,0 +1,22 @@
+# Gradle
+.gradle/
+build/
+**/build/
+
+# Local properties (contains SDK path, machine-specific)
+local.properties
+
+# IDE
+.idea/
+*.iml
+
+# Kotlin
+.kotlin/
+
+# Android
+*.apk
+*.ap_
+*.aab
+
+# Proguard
+proguard/

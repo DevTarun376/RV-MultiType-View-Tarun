@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginHorizontal="2dp"
+            android:layout_marginTop="-10dp"
+            android:layout_marginBottom="5dp"
+            app:cardCornerRadius="5dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ivSelectedIcon">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/clParent"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="0.5dip">
+
+                <ImageView
+                    android:id="@+id/ivInitializationLoader"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@string/mtv_initializing"
+                    android:elevation="4dp"
+                    android:src="@drawable/mtv_ic_loading_icon"
+                    android:visibility="gone"
+                    tools:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/tvInitializedText"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:elevation="4dp"
+                    android:text="@string/mtv_initialized"
+                    android:textSize="9sp"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/ivIcon"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/mtv_placeholder"
+                    android:visibility="visible"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/loadingTv"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="@string/mtv_loading"
+                    android:textSize="10sp"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/ivPlay"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@drawable/mtv_ic_play_video"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@id/ivIcon"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/ivIcon" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/proofPhoto"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginTop="1dp"
+                    android:src="@drawable/mtv_ic_proof_photo"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="@id/ivIcon"
+                    app:layout_constraintTop_toTopOf="@id/ivIcon" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivCrossIcon"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginTop="4dp"
+            android:elevation="4dp"
+            android:src="@drawable/mtv_ic_close_red"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivSelectedIcon"
+            android:layout_width="13dp"
+            android:layout_height="13dp"
+            android:layout_marginEnd="7dp"
+            android:elevation="5dp"
+            android:src="@drawable/mtv_ic_checkbox_unselected"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="gone" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

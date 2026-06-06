@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="model"
+            type="com.tech.multitypeview.model.MultiTypeItem" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/liTicket"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="@{model.ticketNumber != null ? android.view.View.VISIBLE : android.view.View.GONE}"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvTicketNumber"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:textColor="@android:color/black"
+                android:text="@{`Ticket: ` + model.ticketNumber}"
+                tools:text="Ticket 249812498120" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/ivLinkedTicket"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginStart="4dp"
+                android:visibility="gone"
+                app:layout_constraintStart_toEndOf="@+id/tvTicketNumber"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:visibility="visible" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/ivExpand"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginStart="4dp"
+                android:src="@{model.isExpanded ? @drawable/mtv_ic_arrow_down : @drawable/mtv_ic_arrow_up}"
+                tools:src="@drawable/mtv_ic_arrow_up" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

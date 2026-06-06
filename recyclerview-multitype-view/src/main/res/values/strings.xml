@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="mtv_admin_items">Admin Items</string>
+    <string name="mtv_tech_items">Tech Items</string>
+    <string name="mtv_loading">Loading…</string>
+    <string name="mtv_initialized">Initialized</string>
+    <string name="mtv_initializing">Initializing</string>
+</resources>

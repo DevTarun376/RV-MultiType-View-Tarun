@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">RV-MultiType-View</string>
+    <string name="mtv_demo_enter_delete">Enter Delete Mode</string>
+    <string name="mtv_demo_exit_delete">Exit Delete Mode</string>
+</resources>

@@ -9,6 +9,7 @@ import com.example.rv_multitype_view.demo.DemoDataFactory
 import com.tech.multitypeview.adapter.MultiTypeAdapter
 import com.tech.multitypeview.adapter.MultiTypeAdapterCallback
 import com.tech.multitypeview.model.MultiTypeItem
+import com.tech.multitypeview.ui.MultiTypeConfig
 import com.tech.multitypeview.ui.MultiTypeRecyclerManager
 
 class MainActivity : AppCompatActivity(), MultiTypeAdapterCallback {
@@ -25,7 +26,18 @@ class MainActivity : AppCompatActivity(), MultiTypeAdapterCallback {
         supportActionBar?.title = "MultiTypeView Demo"
 
         adapter = MultiTypeAdapter(listener = this)
-        manager = MultiTypeRecyclerManager(this, binding.recyclerView, adapter)
+        manager = MultiTypeRecyclerManager(
+            context = this,
+            recyclerView = binding.recyclerView,
+            adapter = adapter,
+            config = MultiTypeConfig(
+                pageSize = 50,
+                phoneGridColumns = 5,
+                tabletGridColumns = 4,
+                scrollPrefetchThreshold = 5,
+                showScrollbar = true,
+            ),
+        )
         manager.loadItems(DemoDataFactory.build())
 
         binding.btnToggleDelete.setOnClickListener {

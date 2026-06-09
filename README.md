@@ -7,7 +7,7 @@ A RecyclerView library for displaying grouped, multi-type lists with images, vid
 <!-- DEMO VIDEO — replace the line below with your screen recording -->
 <!-- Example: ![Demo](assets/demo.gif) or paste the GitHub-uploaded MP4 URL -->
 
-> **Demo coming soon**
+<img width="216" height="480" alt="gif" src="https://github.com/user-attachments/assets/f2678b72-9fcd-47af-8307-9143cc7d90b4" />
 
 ---
 

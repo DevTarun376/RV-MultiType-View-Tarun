@@ -14,9 +14,9 @@ internal object PayloadKeys {
 internal object MultiTypeDiffCallback : DiffUtil.ItemCallback<MultiTypeItem>() {
 
     override fun areItemsTheSame(old: MultiTypeItem, new: MultiTypeItem): Boolean =
-        old.ticketId == new.ticketId &&
+        old.id == new.id &&
                 old.type == new.type &&
-                (old.type != MultiViewType.GRID || old.picLocation == new.picLocation) &&
+                (old.type != MultiViewType.GRID || old.itemUrl == new.itemUrl) &&
                 (old.type != MultiViewType.HEADER || old.header == new.header)
 
     override fun areContentsTheSame(old: MultiTypeItem, new: MultiTypeItem): Boolean =

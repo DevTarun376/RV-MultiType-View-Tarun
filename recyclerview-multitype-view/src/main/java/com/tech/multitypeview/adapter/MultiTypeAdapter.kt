@@ -12,32 +12,28 @@ import com.tech.multitypeview.databinding.MtvItemGridBinding
 import com.tech.multitypeview.databinding.MtvItemHeaderBinding
 import com.tech.multitypeview.databinding.MtvItemSectionHeaderBinding
 import com.tech.multitypeview.databinding.MtvItemTicketNumberBinding
+import com.tech.multitypeview.model.MediaKind
 import com.tech.multitypeview.model.MultiTypeItem
 import com.tech.multitypeview.model.MultiViewType
-import com.tech.multitypeview.model.MediaKind
 import com.tech.multitypeview.ui.MultiTypeTheme
 import com.tech.multitypeview.viewholder.GridViewHolder
 import com.tech.multitypeview.viewholder.HeaderViewHolder
+import com.tech.multitypeview.viewholder.LabelViewHolder
 import com.tech.multitypeview.viewholder.SectionHeaderViewHolder
-import com.tech.multitypeview.viewholder.TicketNumberViewHolder
 
 class MultiTypeAdapter(
     var listener: MultiTypeAdapterCallback? = null,
     val theme: MultiTypeTheme = MultiTypeTheme(),
 ) : ListAdapter<MultiTypeItem, RecyclerView.ViewHolder>(MultiTypeDiffCallback) {
 
-    // ── Companion — backward-compatible view-type constants ───────────────────
-
     companion object {
-        const val VIEW_TYPE_TICKET_NUMBER_LINEAR = MultiViewType.TICKET_NUMBER
-        const val VIEW_TYPE_HEADER_LINEAR = MultiViewType.HEADER
-        const val VIEW_TYPE_TECH_HEADER_LINEAR = MultiViewType.TECH_HEADER
-        const val VIEW_TYPE_ADMIN_HEADER_LINEAR = MultiViewType.ADMIN_HEADER
+        const val VIEW_TYPE_LABEL = MultiViewType.LABEL
+        const val VIEW_TYPE_HEADER = MultiViewType.HEADER
+        const val VIEW_TYPE_SECTION_A = MultiViewType.SECTION_A
+        const val VIEW_TYPE_SECTION_B = MultiViewType.SECTION_B
         const val VIEW_TYPE_GRID = MultiViewType.GRID
         const val DEFAULT_PAGE_SIZE = Paginator.DEFAULT_PAGE_SIZE
     }
-
-    // ── State — delegated to focused controllers (SRP) ────────────────────────
 
     private val expandController = ExpandController()
     private var paginator = Paginator()
@@ -46,12 +42,35 @@ class MultiTypeAdapter(
     var enableDelete = false
         private set
 
+    var onSelectionChanged: ((selectedCount: Int) -> Unit)? = null
+
     // ── Public API ────────────────────────────────────────────────────────────
 
     fun setDeleteMode(enabled: Boolean) {
         if (enableDelete == enabled) return
         enableDelete = enabled
-        notifyItemRangeChanged(0, itemCount)
+        if (!enabled) {
+            val cleared = currentList.map { if (it.isSelected) it.copy(isSelected = false) else it }
+            submitList(cleared) { onSelectionChanged?.invoke(0) }
+        } else {
+            notifyItemRangeChanged(0, itemCount)
+        }
+    }
+
+    fun getSelectedItemCount(): Int = currentList.count { it.isSelected }
+
+    fun deleteSelectedItems() {
+        val locations = currentList.filter { it.isSelected }.mapNotNull { it.itemUrl }.toSet()
+        if (locations.isEmpty()) return
+        expandController.removeItems(locations)
+        val remainingCount = (currentList.size - locations.size).coerceAtLeast(0)
+        paginator.setSource(expandController.visibleItems(), loadAtLeast = remainingCount)
+        submitList(paginator.currentPage())
+        onSelectionChanged?.invoke(0)
+        if (enableDelete) {
+            enableDelete = false
+            notifyItemRangeChanged(0, itemCount)
+        }
     }
 
     fun loadItems(items: List<MultiTypeItem>, pageSize: Int = DEFAULT_PAGE_SIZE) {
@@ -84,12 +103,12 @@ class MultiTypeAdapter(
     // ── ListAdapter overrides ─────────────────────────────────────────────────
 
     override fun getItemViewType(position: Int): Int =
-        getItem(position).type ?: MultiViewType.TICKET_NUMBER
+        getItem(position).type ?: MultiViewType.LABEL
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         return when (viewType) {
-            MultiViewType.TICKET_NUMBER -> TicketNumberViewHolder(
+            MultiViewType.LABEL -> LabelViewHolder(
                 binding = MtvItemTicketNumberBinding.inflate(inflater, parent, false),
                 theme = theme,
                 itemAt = ::safeGetItem,
@@ -99,16 +118,16 @@ class MultiTypeAdapter(
                 binding = MtvItemHeaderBinding.inflate(inflater, parent, false),
                 theme = theme,
             )
-            MultiViewType.TECH_HEADER -> SectionHeaderViewHolder(
+            MultiViewType.SECTION_A -> SectionHeaderViewHolder(
                 binding = MtvItemSectionHeaderBinding.inflate(inflater, parent, false),
-                label = parent.context.getString(R.string.mtv_tech_items),
+                label = parent.context.getString(R.string.mtv_section_a),
                 theme = theme,
                 itemAt = ::safeGetItem,
                 onExpandToggle = ::handleExpandToggle
             )
-            MultiViewType.ADMIN_HEADER -> SectionHeaderViewHolder(
+            MultiViewType.SECTION_B -> SectionHeaderViewHolder(
                 binding = MtvItemSectionHeaderBinding.inflate(inflater, parent, false),
-                label = parent.context.getString(R.string.mtv_admin_items),
+                label = parent.context.getString(R.string.mtv_section_b),
                 theme = theme,
                 itemAt = ::safeGetItem,
                 onExpandToggle = ::handleExpandToggle
@@ -129,7 +148,7 @@ class MultiTypeAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val item = getItem(position)
         when (holder) {
-            is TicketNumberViewHolder -> holder.bind(item)
+            is LabelViewHolder -> holder.bind(item)
             is HeaderViewHolder -> holder.bind(item)
             is SectionHeaderViewHolder -> holder.bind(item)
             is GridViewHolder -> holder.bind(item)
@@ -148,7 +167,7 @@ class MultiTypeAdapter(
         val item = getItem(position)
         val bundle = payloads[0] as Bundle
         when (holder) {
-            is TicketNumberViewHolder -> holder.update(item, bundle)
+            is LabelViewHolder -> holder.update(item, bundle)
             is SectionHeaderViewHolder -> holder.update(item, bundle)
             is GridViewHolder -> holder.update(item, bundle)
             else -> super.onBindViewHolder(holder, position, payloads)
@@ -167,28 +186,27 @@ class MultiTypeAdapter(
 
     private fun handleExpandToggle(item: MultiTypeItem) {
         expandController.toggle(item)
-        // Preserve how far the user has already scrolled; don't reset to page 1.
         val alreadyLoaded = currentList.size
         paginator.setSource(expandController.visibleItems(), loadAtLeast = alreadyLoaded)
         submitList(paginator.currentPage())
     }
 
     private fun handleGridItemClick(item: MultiTypeItem) {
-        if (item.mediaKind == MediaKind.ADMIN_ITEM) {
+        if (item.mediaKind == MediaKind.DOCUMENT) {
             val filtered = currentList.filter {
-                it.mediaKind == MediaKind.ADMIN_ITEM &&
-                        it.ticketId == item.ticketId &&
+                it.mediaKind == MediaKind.DOCUMENT &&
+                        it.id == item.id &&
                         it.type == MultiViewType.GRID
             }
-            val idx = filtered.indexOfFirst { it.picLocation == item.picLocation }
-            if (idx != -1) listener?.onAdminItemClick(idx, filtered)
+            val idx = filtered.indexOfFirst { it.itemUrl == item.itemUrl }
+            if (idx != -1) listener?.onSecondaryItemClick(idx, filtered)
         } else {
             val filtered = currentList.filter {
-                (it.mediaKind == MediaKind.TECH_IMAGE || it.mediaKind == MediaKind.TECH_VIDEO) &&
-                        it.ticketId == item.ticketId &&
+                (it.mediaKind == MediaKind.IMAGE || it.mediaKind == MediaKind.VIDEO) &&
+                        it.id == item.id &&
                         it.type == MultiViewType.GRID
             }
-            val idx = filtered.indexOfFirst { it.picLocation == item.picLocation }
+            val idx = filtered.indexOfFirst { it.itemUrl == item.itemUrl }
             if (idx != -1) listener?.onItemClick(idx, filtered)
         }
     }
@@ -197,7 +215,7 @@ class MultiTypeAdapter(
         val updated = currentList.toMutableList()
         if (pos < updated.size) {
             updated[pos] = item.copy(isSelected = !item.isSelected)
-            submitList(updated)
+            submitList(updated) { onSelectionChanged?.invoke(updated.count { it.isSelected }) }
         }
     }
 }

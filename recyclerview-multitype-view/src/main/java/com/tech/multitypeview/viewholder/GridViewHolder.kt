@@ -12,7 +12,6 @@ import com.bumptech.glide.request.target.Target
 import com.tech.multitypeview.adapter.PayloadKeys
 import com.tech.multitypeview.databinding.MtvItemGridBinding
 import com.tech.multitypeview.model.MultiTypeItem
-import com.tech.multitypeview.model.InitializationState
 import com.tech.multitypeview.model.MediaKind
 import com.tech.multitypeview.ui.MultiTypeTheme
 import com.tech.multitypeview.util.MediaTypeHelper
@@ -48,8 +47,8 @@ internal class GridViewHolder(
         binding.root.setBackgroundColor(theme.gridItemBackground)
         binding.cardView.setCardBackgroundColor(theme.gridCardBackground)
         when (item.mediaKind) {
-            MediaKind.TECH_IMAGE, MediaKind.TECH_VIDEO -> bindTechItem(item)
-            MediaKind.ADMIN_ITEM -> bindAdminItem(item)
+            MediaKind.IMAGE, MediaKind.VIDEO -> bindMediaItem(item)
+            MediaKind.DOCUMENT -> bindDocumentItem(item)
             MediaKind.NONE -> hideContent()
         }
     }
@@ -66,32 +65,27 @@ internal class GridViewHolder(
         Glide.with(binding.root.context.applicationContext).clear(binding.ivIcon)
     }
 
-    private fun bindTechItem(item: MultiTypeItem) {
+    private fun bindMediaItem(item: MultiTypeItem) {
         val deleteOn = isDeleteEnabled()
         binding.ivIcon.isVisible = true
-        binding.ivPlay.isVisible = item.mediaKind == MediaKind.TECH_VIDEO
+        binding.ivPlay.isVisible = item.mediaKind == MediaKind.VIDEO
         binding.ivSelectedIcon.isVisible = deleteOn
-        binding.ivInitializationLoader.isVisible = item.initializationState == InitializationState.PENDING
-        binding.proofPhoto.isVisible = item.isAIPhotoProof
         if (deleteOn) {
             binding.ivSelectedIcon.setImageResource(
                 if (item.isSelected) theme.iconCheckboxSelected else theme.iconCheckboxUnselected
             )
         }
-        if (item.mediaKind == MediaKind.TECH_VIDEO) {
+        if (item.mediaKind == MediaKind.VIDEO) {
             binding.ivPlay.setImageResource(theme.iconPlay)
         }
-        loadImage(item.picLocation)
+        loadImage(item.itemUrl)
     }
 
-    private fun bindAdminItem(item: MultiTypeItem) {
+    private fun bindDocumentItem(item: MultiTypeItem) {
         binding.ivIcon.isVisible = true
         binding.ivPlay.isVisible = false
         binding.ivSelectedIcon.isVisible = false
-        binding.ivInitializationLoader.isVisible = false
-        binding.tvInitializedText.isVisible = false
-        binding.proofPhoto.isVisible = item.isAIPhotoProof
-        loadAdminItem(item.picLocation)
+        loadDocumentItem(item.itemUrl)
     }
 
     private fun hideContent() {
@@ -99,7 +93,6 @@ internal class GridViewHolder(
         binding.loadingTv.isVisible = false
         binding.ivPlay.isVisible = false
         binding.ivSelectedIcon.isVisible = false
-        binding.proofPhoto.isVisible = false
     }
 
     private fun loadImage(url: String?) {
@@ -112,7 +105,7 @@ internal class GridViewHolder(
             .into(binding.ivIcon)
     }
 
-    private fun loadAdminItem(url: String?) {
+    private fun loadDocumentItem(url: String?) {
         val staticRes = when {
             url == null -> theme.iconPlaceholder
             MediaTypeHelper.isPdfExtension(url) -> theme.iconPdf

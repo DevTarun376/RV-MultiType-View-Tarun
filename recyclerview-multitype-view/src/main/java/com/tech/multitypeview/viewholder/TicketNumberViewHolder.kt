@@ -7,7 +7,7 @@ import com.tech.multitypeview.databinding.MtvItemTicketNumberBinding
 import com.tech.multitypeview.model.MultiTypeItem
 import com.tech.multitypeview.ui.MultiTypeTheme
 
-internal class TicketNumberViewHolder(
+internal class LabelViewHolder(
     val binding: MtvItemTicketNumberBinding,
     private val theme: MultiTypeTheme,
     private val itemAt: (Int) -> MultiTypeItem?,
@@ -23,8 +23,8 @@ internal class TicketNumberViewHolder(
 
     fun bind(item: MultiTypeItem) {
         binding.model = item
-        binding.root.setBackgroundColor(theme.ticketRowBackground)
-        binding.tvTicketNumber.setTextColor(theme.ticketNumberTextColor)
+        binding.root.setBackgroundColor(theme.labelRowBackground)
+        binding.tvLabel.setTextColor(theme.labelTextColor)
         setArrow(item)
     }
 

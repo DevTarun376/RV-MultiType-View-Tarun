@@ -29,25 +29,6 @@
                 android:layout_height="match_parent"
                 android:padding="0.5dip">
 
-                <ImageView
-                    android:id="@+id/ivInitializationLoader"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:contentDescription="@string/mtv_initializing"
-                    android:elevation="4dp"
-                    android:src="@drawable/mtv_ic_loading_icon"
-                    android:visibility="gone"
-                    tools:visibility="gone" />
-
-                <TextView
-                    android:id="@+id/tvInitializedText"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:elevation="4dp"
-                    android:text="@string/mtv_initialized"
-                    android:textSize="9sp"
-                    android:visibility="gone"
-                    tools:visibility="visible" />
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/ivIcon"
@@ -83,16 +64,6 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="@id/ivIcon"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/ivIcon" />
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/proofPhoto"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_marginTop="1dp"
-                    android:src="@drawable/mtv_ic_proof_photo"
-                    android:visibility="gone"
-                    app:layout_constraintEnd_toEndOf="@id/ivIcon"
                     app:layout_constraintTop_toTopOf="@id/ivIcon" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>

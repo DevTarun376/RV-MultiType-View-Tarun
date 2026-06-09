@@ -17,29 +17,29 @@ internal class ExpandController {
         val isExpanding = !(item.isExpanded ?: false)
 
         // Snapshot current section states before mutating the list.
-        var techExpanded = false
-        var adminExpanded = false
+        var sectionAExpanded = false
+        var sectionBExpanded = false
         fullList.forEach {
-            if (it.ticketId != item.ticketId) return@forEach
+            if (it.id != item.id) return@forEach
             when (it.type) {
-                MultiViewType.TECH_HEADER -> techExpanded = it.isExpanded ?: false
-                MultiViewType.ADMIN_HEADER -> adminExpanded = it.isExpanded ?: false
+                MultiViewType.SECTION_A -> sectionAExpanded = it.isExpanded ?: false
+                MultiViewType.SECTION_B -> sectionBExpanded = it.isExpanded ?: false
             }
         }
 
         fullList = fullList.map { current ->
-            if (current.ticketId != item.ticketId) return@map current
+            if (current.id != item.id) return@map current
             when (current.type) {
                 item.type -> current.copy(isExpanded = isExpanding)
-                MultiViewType.TECH_HEADER,
-                MultiViewType.ADMIN_HEADER,
+                MultiViewType.SECTION_A,
+                MultiViewType.SECTION_B,
                 MultiViewType.HEADER ->
-                    if (item.type == MultiViewType.TICKET_NUMBER) current.copy(isVisible = isExpanding)
+                    if (item.type == MultiViewType.LABEL) current.copy(isVisible = isExpanding)
                     else current
                 MultiViewType.GRID -> current.copy(
                     isVisible = when (item.type) {
-                        MultiViewType.TICKET_NUMBER ->
-                            isExpanding && if (current.mediaKind == MediaKind.ADMIN_ITEM) adminExpanded else techExpanded
+                        MultiViewType.LABEL ->
+                            isExpanding && if (current.mediaKind == MediaKind.DOCUMENT) sectionBExpanded else sectionAExpanded
                         else -> isExpanding
                     }
                 )
@@ -49,6 +49,10 @@ internal class ExpandController {
     }
 
     fun visibleItems(): List<MultiTypeItem> = fullList.filter { it.isVisible != false }
+
+    fun removeItems(locations: Set<String>) {
+        fullList = fullList.filterNot { it.itemUrl != null && it.itemUrl in locations }
+    }
 
     fun clear() {
         fullList = emptyList()

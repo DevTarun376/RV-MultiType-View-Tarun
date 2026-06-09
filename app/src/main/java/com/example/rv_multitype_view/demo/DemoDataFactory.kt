@@ -1,15 +1,12 @@
 package com.example.rv_multitype_view.demo
 
-import com.tech.multitypeview.model.InitializationState
 import com.tech.multitypeview.model.MediaKind
 import com.tech.multitypeview.model.MultiTypeItem
 import com.tech.multitypeview.model.MultiViewType
-import com.tech.multitypeview.model.TicketBindingType
 
 object DemoDataFactory {
 
     private const val PICSUM = "https://picsum.photos/seed"
-    private val BINDING_TYPES = TicketBindingType.entries.toTypedArray()
     private val DATES = listOf(
         "January 10, 2025", "February 14, 2025", "March 3, 2025",
         "April 22, 2025", "May 17, 2025", "June 6, 2025",
@@ -19,111 +16,98 @@ object DemoDataFactory {
 
     fun build(): List<MultiTypeItem> = buildList {
         repeat(1000) { i ->
-            val ticketNum = i + 1
-            val id = "T-%04d".format(ticketNum)
-            addTicket(
+            val num = i + 1
+            val id = "I-%04d".format(num)
+            addGroup(
                 list = this,
                 id = id,
-                number = id,
                 date = DATES[i % DATES.size],
                 isExpanded = i % 3 != 1,
-                techExpanded = i % 4 != 2,
-                adminExpanded = i % 5 != 3,
-                bindingType = BINDING_TYPES[i % BINDING_TYPES.size],
-                techImages = List(3) { j -> "$PICSUM/$id-ti$j/300/300" },
-                techVideos = if (i % 3 == 0) listOf("$PICSUM/$id-tv/300/300") else emptyList(),
-                aiProofIndex = if (i % 4 == 0) 1 else -1,
-                adminItems = List(3) { j ->
+                sectionAExpanded = i % 4 != 2,
+                sectionBExpanded = i % 5 != 3,
+                images = List(3) { j -> "$PICSUM/$id-img$j/300/300" },
+                videos = if (i % 3 == 0) listOf("$PICSUM/$id-vid/300/300") else emptyList(),
+                documents = List(3) { j ->
                     when (j % 3) {
-                        0 -> "report_$ticketNum.pdf"
-                        1 -> "notice_$ticketNum.eml"
-                        else -> "$PICSUM/$id-ai$j/300/300"
+                        0 -> "file_$num.pdf"
+                        1 -> "email_$num.eml"
+                        else -> "$PICSUM/$id-doc$j/300/300"
                     }
-                },
-                pendingIndex = if (i % 5 == 0) 2 else -1
+                }
             )
         }
     }
 
-    private fun addTicket(
+    private fun addGroup(
         list: MutableList<MultiTypeItem>,
         id: String,
-        number: String,
         date: String,
         isExpanded: Boolean,
-        techExpanded: Boolean,
-        adminExpanded: Boolean,
-        bindingType: TicketBindingType,
-        techImages: List<String>,
-        techVideos: List<String>,
-        aiProofIndex: Int,
-        adminItems: List<String>,
-        pendingIndex: Int
+        sectionAExpanded: Boolean,
+        sectionBExpanded: Boolean,
+        images: List<String>,
+        videos: List<String>,
+        documents: List<String>
     ) = with(list) {
         add(MultiTypeItem(
-            type = MultiViewType.TICKET_NUMBER,
-            ticketId = id,
-            ticketNumber = number,
+            type = MultiViewType.LABEL,
+            id = id,
             isExpanded = isExpanded,
-            bindingType = bindingType,
             isVisible = true
         ))
 
         add(MultiTypeItem(
             type = MultiViewType.HEADER,
-            ticketId = id,
+            id = id,
             header = date,
             isVisible = isExpanded
         ))
 
         add(MultiTypeItem(
-            type = MultiViewType.TECH_HEADER,
-            ticketId = id,
-            isExpanded = techExpanded,
+            type = MultiViewType.SECTION_A,
+            id = id,
+            isExpanded = sectionAExpanded,
             isVisible = isExpanded
         ))
 
         var gridIndex = 0
-        techImages.forEachIndexed { i, url ->
+        images.forEach { url ->
             add(MultiTypeItem(
                 type = MultiViewType.GRID,
-                ticketId = id,
-                mediaKind = MediaKind.TECH_IMAGE,
-                picLocation = url,
+                id = id,
+                mediaKind = MediaKind.IMAGE,
+                itemUrl = url,
                 imageIndex = gridIndex++,
-                isVisible = isExpanded && techExpanded,
-                isAIPhotoProof = i == aiProofIndex,
-                initializationState = if (i == pendingIndex) InitializationState.PENDING
-                                      else InitializationState.STANDARD
+                isVisible = isExpanded && sectionAExpanded
             ))
         }
-        techVideos.forEach { url ->
+        videos.forEach { url ->
             add(MultiTypeItem(
                 type = MultiViewType.GRID,
-                ticketId = id,
-                mediaKind = MediaKind.TECH_VIDEO,
-                picLocation = url,
+                id = id,
+                mediaKind = MediaKind.VIDEO,
+                itemUrl = url,
                 imageIndex = gridIndex++,
-                isVisible = isExpanded && techExpanded
+                isVisible = isExpanded && sectionAExpanded
             ))
         }
 
         add(MultiTypeItem(
-            type = MultiViewType.ADMIN_HEADER,
-            ticketId = id,
-            isExpanded = adminExpanded,
+            type = MultiViewType.SECTION_B,
+            id = id,
+            isExpanded = sectionBExpanded,
             isVisible = isExpanded
         ))
 
-        adminItems.forEachIndexed { i, path ->
+        documents.forEachIndexed { i, path ->
             add(MultiTypeItem(
                 type = MultiViewType.GRID,
-                ticketId = id,
-                mediaKind = MediaKind.ADMIN_ITEM,
-                picLocation = path,
+                id = id,
+                mediaKind = MediaKind.DOCUMENT,
+                itemUrl = path,
                 name = path.substringAfterLast("/"),
                 imageIndex = i,
-                isVisible = isExpanded && adminExpanded
+                isVisible = isExpanded && sectionBExpanded
             ))
         }
     }

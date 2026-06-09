@@ -7,7 +7,6 @@ import com.tech.multitypeview.databinding.MtvItemSectionHeaderBinding
 import com.tech.multitypeview.model.MultiTypeItem
 import com.tech.multitypeview.ui.MultiTypeTheme
 
-// Single ViewHolder for both TECH_HEADER and ADMIN_HEADER — identical structure, label differs.
 internal class SectionHeaderViewHolder(
     val binding: MtvItemSectionHeaderBinding,
     private val label: String,

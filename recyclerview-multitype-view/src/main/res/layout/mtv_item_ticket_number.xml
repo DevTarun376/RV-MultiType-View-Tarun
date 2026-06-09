@@ -15,30 +15,30 @@
         android:layout_marginTop="2dp">
 
         <androidx.appcompat.widget.LinearLayoutCompat
-            android:id="@+id/liTicket"
+            android:id="@+id/liLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="@{model.ticketNumber != null ? android.view.View.VISIBLE : android.view.View.GONE}"
+            android:visibility="@{model.id != null ? android.view.View.VISIBLE : android.view.View.GONE}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tvTicketNumber"
+                android:id="@+id/tvLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="16sp"
                 android:textColor="@android:color/black"
-                android:text="@{`Ticket: ` + model.ticketNumber}"
-                tools:text="Ticket 249812498120" />
+                android:text="@{model.id}"
+                tools:text="I-0001" />
 
             <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/ivLinkedTicket"
+                android:id="@+id/ivLinked"
                 android:layout_width="15dp"
                 android:layout_height="15dp"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginStart="4dp"
                 android:visibility="gone"
-                app:layout_constraintStart_toEndOf="@+id/tvTicketNumber"
+                app:layout_constraintStart_toEndOf="@+id/tvLabel"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:visibility="visible" />
 

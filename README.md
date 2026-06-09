@@ -366,3 +366,183 @@ val adapter = MultiTypeAdapter(
 | `onItemClick(position, list)` | An IMAGE or VIDEO grid cell is tapped |
 | `onSecondaryItemClick(position, list)` | A DOCUMENT grid cell is tapped |
 | `onLongPressDelete(item)` | Any grid cell is long-pressed |
+
+---
+
+## Get the Code from GitHub
+
+Clone the repository and open it in Android Studio:
+
+```bash
+git clone https://github.com/DevTarun376/RV-MultiType-View-Tarun.git
+cd RV-MultiType-View-Tarun
+```
+
+Open the project in Android Studio, let Gradle sync, then run the **app** module on any device or emulator to see a working sample. The sample app in `app/` wires up a pre-populated list so you can see pagination, expand/collapse, delete mode, and theming all in one place.
+
+---
+
+## Specific Use Case — Photo Gallery Grouped by Date
+
+The example below shows a complete, self-contained photo gallery screen. Each group is one day; Section A holds photos and Section B holds shared documents for that day.
+
+```kotlin
+class GalleryActivity : AppCompatActivity(), MultiTypeAdapterCallback {
+
+    private lateinit var binding: ActivityGalleryBinding
+    private lateinit var adapter: MultiTypeAdapter
+    private lateinit var manager: MultiTypeRecyclerManager
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding = ActivityGalleryBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        adapter = MultiTypeAdapter(
+            listener = this,
+            theme = MultiTypeTheme(
+                itemBackground        = Color.parseColor("#F8F9FA"),
+                labelTextColor        = Color.parseColor("#1A73E8"),
+                headerTextColor       = Color.parseColor("#666666"),
+                sectionLabelTextColor = Color.parseColor("#333333"),
+                gridCardBackground    = Color.WHITE
+            )
+        )
+
+        manager = MultiTypeRecyclerManager(
+            context = this,
+            recyclerView = binding.recyclerView,
+            adapter = adapter,
+            config = MultiTypeConfig(
+                pageSize = 30,
+                phoneGridColumns = 3,
+                tabletGridColumns = 5,
+                scrollPrefetchThreshold = 8,
+                showScrollbar = true
+            )
+        )
+
+        manager.loadItems(buildGalleryItems())
+
+        adapter.onSelectionChanged = { count ->
+            binding.btnDelete.visibility = if (count > 0) View.VISIBLE else View.GONE
+            binding.btnDelete.text = "Delete ($count)"
+        }
+
+        binding.btnDelete.setOnClickListener {
+            AlertDialog.Builder(this)
+                .setTitle("Delete")
+                .setMessage("Remove ${adapter.getSelectedItemCount()} photo(s)?")
+                .setPositiveButton("Delete") { _, _ -> adapter.deleteSelectedItems() }
+                .setNegativeButton("Cancel", null)
+                .show()
+        }
+    }
+
+    private fun buildGalleryItems(): List<MultiTypeItem> = buildList {
+        // ── Day 1 ──────────────────────────────────────────────
+        add(MultiTypeItem(type = MultiViewType.LABEL,     id = "day-1", isExpanded = true,  isVisible = true))
+        add(MultiTypeItem(type = MultiViewType.HEADER,    id = "day-1", header = "June 9, 2025", isVisible = true))
+        add(MultiTypeItem(type = MultiViewType.SECTION_A, id = "day-1", isExpanded = true,  isVisible = true))
+        add(MultiTypeItem(type = MultiViewType.GRID, id = "day-1", mediaKind = MediaKind.IMAGE,
+            itemUrl = "https://example.com/day1_photo1.jpg", imageIndex = 0, isVisible = true))
+        add(MultiTypeItem(type = MultiViewType.GRID, id = "day-1", mediaKind = MediaKind.VIDEO,
+            itemUrl = "https://example.com/day1_video.mp4", imageIndex = 1, isVisible = true))
+        add(MultiTypeItem(type = MultiViewType.SECTION_B, id = "day-1", isExpanded = true,  isVisible = true))
+        add(MultiTypeItem(type = MultiViewType.GRID, id = "day-1", mediaKind = MediaKind.DOCUMENT,
+            itemUrl = "notes.pdf", name = "notes.pdf", imageIndex = 0, isVisible = true))
+
+        // ── Day 2 ──────────────────────────────────────────────
+        add(MultiTypeItem(type = MultiViewType.LABEL,     id = "day-2", isExpanded = true,  isVisible = true))
+        add(MultiTypeItem(type = MultiViewType.HEADER,    id = "day-2", header = "June 8, 2025", isVisible = true))
+        add(MultiTypeItem(type = MultiViewType.SECTION_A, id = "day-2", isExpanded = true,  isVisible = true))
+        add(MultiTypeItem(type = MultiViewType.GRID, id = "day-2", mediaKind = MediaKind.IMAGE,
+            itemUrl = "https://example.com/day2_photo1.jpg", imageIndex = 0, isVisible = true))
+        add(MultiTypeItem(type = MultiViewType.GRID, id = "day-2", mediaKind = MediaKind.IMAGE,
+            itemUrl = "https://example.com/day2_photo2.jpg", imageIndex = 1, isVisible = true))
+    }
+
+    override fun onItemClick(position: Int, list: List<MultiTypeItem>) {
+        val item = list[position]
+        // open full-screen viewer with item.itemUrl
+    }
+
+    override fun onSecondaryItemClick(position: Int, list: List<MultiTypeItem>) {
+        val item = list[position]
+        // open document viewer with item.itemUrl / item.name
+    }
+
+    override fun onLongPressDelete(item: MultiTypeItem?) {
+        adapter.setDeleteMode(true)
+    }
+}
+```
+
+---
+
+## Flexibility & How to Extend on Your Side
+
+MultiTypeView is intentionally thin: the library owns the adapter, paginator, and ViewHolder wiring — everything else is yours to control.
+
+### Swap in your own data model
+
+`MultiTypeItem` is a plain data class. Map your domain objects to it in a single function:
+
+```kotlin
+fun MyPhoto.toMultiTypeItem(groupId: String, index: Int) = MultiTypeItem(
+    type       = MultiViewType.GRID,
+    id         = groupId,
+    mediaKind  = if (isVideo) MediaKind.VIDEO else MediaKind.IMAGE,
+    itemUrl    = url,
+    imageIndex = index,
+    isVisible  = true
+)
+```
+
+Call that mapper in a `buildList {}` block and hand the result to `manager.loadItems()`. The library never touches your model layer.
+
+### Drive the list from a ViewModel
+
+Because `loadItems` and `updateListItems` accept any `List<MultiTypeItem>`, you can feed them directly from a `StateFlow` or `LiveData`:
+
+```kotlin
+viewModel.galleryState.observe(this) { items ->
+    adapter.updateListItems(items)   // DiffUtil handles the diff — no flicker
+}
+```
+
+### Plug in a custom image loader
+
+All image URLs pass through Glide inside the library's ViewHolder. If you need headers, transformations, or a different CDN, subclass or wrap the adapter and override `onBindViewHolder` for `MultiViewType.GRID` before calling `super`.
+
+### Add new row types
+
+The adapter maps `type` integers to ViewHolder classes. To add a custom row (e.g. an ad banner or a date-divider):
+
+1. Define a new constant outside the `MultiViewType` range (e.g. `const val AD_BANNER = 10`).
+2. Subclass `MultiTypeAdapter`, override `getItemViewType`, `onCreateViewHolder`, and `onBindViewHolder` for your new type.
+3. Pass your subclass to `MultiTypeRecyclerManager` as normal — the paginator and expand/collapse logic are unaffected.
+
+### Theme per-group at runtime
+
+`MultiTypeTheme` is a data class — create multiple instances and swap the adapter's theme between groups for striped or color-coded lists:
+
+```kotlin
+val themes = mapOf("work" to workTheme, "personal" to personalTheme)
+override fun onItemClick(position: Int, list: List<MultiTypeItem>) {
+    val groupId = list[position].id ?: return
+    adapter.updateTheme(themes[groupId] ?: defaultTheme)
+}
+```
+
+### Summary of extension points
+
+| What you want to change | Where to do it |
+|---|---|
+| Data mapping | Your own mapper function — no library code touched |
+| Image loading / caching | Glide configuration or a subclassed ViewHolder |
+| Pagination trigger distance | `MultiTypeConfig.scrollPrefetchThreshold` |
+| Column count per screen size | `MultiTypeConfig.phoneGridColumns` / `tabletGridColumns` |
+| Colors, icons, backgrounds | `MultiTypeTheme` fields |
+| New row types | Subclass `MultiTypeAdapter` |
+| Callbacks / navigation | `MultiTypeAdapterCallback` implementation |

@@ -5,13 +5,12 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.tech.multitypeview.R
 import com.tech.multitypeview.controller.ExpandController
 import com.tech.multitypeview.controller.Paginator
 import com.tech.multitypeview.databinding.MtvItemGridBinding
 import com.tech.multitypeview.databinding.MtvItemHeaderBinding
 import com.tech.multitypeview.databinding.MtvItemSectionHeaderBinding
-import com.tech.multitypeview.databinding.MtvItemTicketNumberBinding
+import com.tech.multitypeview.databinding.MtvItemLabelBinding
 import com.tech.multitypeview.model.MediaKind
 import com.tech.multitypeview.model.MultiTypeItem
 import com.tech.multitypeview.model.MultiViewType
@@ -109,7 +108,7 @@ class MultiTypeAdapter(
         val inflater = LayoutInflater.from(parent.context)
         return when (viewType) {
             MultiViewType.LABEL -> LabelViewHolder(
-                binding = MtvItemTicketNumberBinding.inflate(inflater, parent, false),
+                binding = MtvItemLabelBinding.inflate(inflater, parent, false),
                 theme = theme,
                 itemAt = ::safeGetItem,
                 onExpandToggle = ::handleExpandToggle
@@ -120,14 +119,12 @@ class MultiTypeAdapter(
             )
             MultiViewType.SECTION_A -> SectionHeaderViewHolder(
                 binding = MtvItemSectionHeaderBinding.inflate(inflater, parent, false),
-                label = parent.context.getString(R.string.mtv_section_a),
                 theme = theme,
                 itemAt = ::safeGetItem,
                 onExpandToggle = ::handleExpandToggle
             )
             MultiViewType.SECTION_B -> SectionHeaderViewHolder(
                 binding = MtvItemSectionHeaderBinding.inflate(inflater, parent, false),
-                label = parent.context.getString(R.string.mtv_section_b),
                 theme = theme,
                 itemAt = ::safeGetItem,
                 onExpandToggle = ::handleExpandToggle

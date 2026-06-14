@@ -7,9 +7,6 @@
         <variable
             name="model"
             type="com.tech.multitypeview.model.MultiTypeItem" />
-        <variable
-            name="labelText"
-            type="String" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -23,7 +20,7 @@
             android:textSize="14sp"
             android:textStyle="bold"
             android:textColor="@android:color/black"
-            android:text="@{labelText}"
+            android:text="@{model.label}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Tech Items" />

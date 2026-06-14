@@ -18,6 +18,7 @@ android {
 
     buildTypes {
         release {
+            // Demo app — keep classes readable for contributors inspecting the APK.
             optimization {
                 enable = false
             }

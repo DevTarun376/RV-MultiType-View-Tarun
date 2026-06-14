@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="mtv_section_a">Section A</string>
-    <string name="mtv_section_b">Section B</string>
     <string name="mtv_loading">Loading…</string>
 </resources>

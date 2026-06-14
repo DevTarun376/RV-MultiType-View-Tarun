@@ -18,7 +18,7 @@
             android:id="@+id/liLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="@{model.id != null ? android.view.View.VISIBLE : android.view.View.GONE}"
+            android:visibility="@{model.label != null ? android.view.View.VISIBLE : android.view.View.GONE}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
@@ -28,19 +28,8 @@
                 android:layout_height="wrap_content"
                 android:textSize="16sp"
                 android:textColor="@android:color/black"
-                android:text="@{model.id}"
-                tools:text="I-0001" />
-
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/ivLinked"
-                android:layout_width="15dp"
-                android:layout_height="15dp"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginStart="4dp"
-                android:visibility="gone"
-                app:layout_constraintStart_toEndOf="@+id/tvLabel"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:visibility="visible" />
+                android:text="@{model.label}"
+                tools:text="Group Title" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/ivExpand"

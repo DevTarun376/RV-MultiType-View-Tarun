@@ -11,6 +11,7 @@ enum class MediaKind {
 data class MultiTypeItem(
     var type: Int? = null,
     var id: String? = null,
+    var label: String? = null,
     var isExpanded: Boolean? = null,
     var header: String? = null,
     var mediaKind: MediaKind = MediaKind.NONE,

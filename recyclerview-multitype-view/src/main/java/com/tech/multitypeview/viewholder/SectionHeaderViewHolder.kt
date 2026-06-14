@@ -9,7 +9,6 @@ import com.tech.multitypeview.ui.MultiTypeTheme
 
 internal class SectionHeaderViewHolder(
     val binding: MtvItemSectionHeaderBinding,
-    private val label: String,
     private val theme: MultiTypeTheme,
     private val itemAt: (Int) -> MultiTypeItem?,
     private val onExpandToggle: (MultiTypeItem) -> Unit
@@ -24,7 +23,6 @@ internal class SectionHeaderViewHolder(
 
     fun bind(item: MultiTypeItem) {
         binding.model = item
-        binding.labelText = label
         binding.root.setBackgroundColor(theme.sectionHeaderBackground)
         binding.tvText.setTextColor(theme.sectionLabelTextColor)
         setArrow(item)

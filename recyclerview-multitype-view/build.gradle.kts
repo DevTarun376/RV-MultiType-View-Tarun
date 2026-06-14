@@ -1,10 +1,11 @@
 plugins {
     id("com.android.library")
+    id("maven-publish")
 }
 
 android {
     namespace = "com.tech.multitypeview"
-    compileSdk = 34
+    compileSdk = 37
 
     defaultConfig {
         minSdk = 29
@@ -25,6 +26,25 @@ android {
     kotlin {
         compilerOptions {
             jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+        }
+    }
+
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+        }
+    }
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            create<MavenPublication>("release") {
+                from(components["release"])
+                groupId = "com.github.DevTarun376"
+                artifactId = "recyclerview-multitype-view"
+                version = "1.0.0"
+            }
         }
     }
 }

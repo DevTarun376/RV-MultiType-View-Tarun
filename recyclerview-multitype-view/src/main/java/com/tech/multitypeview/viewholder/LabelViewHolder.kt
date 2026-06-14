@@ -3,12 +3,12 @@ package com.tech.multitypeview.viewholder
 import android.os.Bundle
 import androidx.recyclerview.widget.RecyclerView
 import com.tech.multitypeview.adapter.PayloadKeys
-import com.tech.multitypeview.databinding.MtvItemTicketNumberBinding
+import com.tech.multitypeview.databinding.MtvItemLabelBinding
 import com.tech.multitypeview.model.MultiTypeItem
 import com.tech.multitypeview.ui.MultiTypeTheme
 
 internal class LabelViewHolder(
-    val binding: MtvItemTicketNumberBinding,
+    val binding: MtvItemLabelBinding,
     private val theme: MultiTypeTheme,
     private val itemAt: (Int) -> MultiTypeItem?,
     private val onExpandToggle: (MultiTypeItem) -> Unit

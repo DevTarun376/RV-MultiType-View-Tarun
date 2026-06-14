@@ -18,6 +18,7 @@ android {
 
     buildTypes {
         release {
+            signingConfig = signingConfigs.getByName("debug")
             // Demo app — keep classes readable for contributors inspecting the APK.
             optimization {
                 enable = false
@@ -45,4 +46,6 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.junit)
+
+//    implementation("com.github.DevTarun376:RV-MultiType-View-Tarun:1.0.0")
 }

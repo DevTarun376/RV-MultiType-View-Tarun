@@ -11,6 +11,30 @@ A RecyclerView library for displaying grouped, multi-type lists with images, vid
 
 ---
 
+## Installation
+
+**Step 1 — add JitPack to your `settings.gradle.kts`:**
+
+```kotlin
+dependencyResolutionManagement {
+    repositories {
+        google()
+        mavenCentral()
+        maven { url = uri("https://jitpack.io") }
+    }
+}
+```
+
+**Step 2 — add the dependency to your app's `build.gradle.kts`:**
+
+```kotlin
+dependencies {
+    implementation("com.github.DevTarun376:RV-MultiType-View-Tarun:1.0.0")
+}
+```
+
+---
+
 ## Why MultiTypeView
 
 ### Load 1000+ images and videos — zero ANR, zero OOM, zero lag
@@ -50,11 +74,11 @@ Expanding or collapsing a section does not reset the paginator back to page 1. T
 Each group in the list is made up of rows in a fixed order:
 
 ```
-LABEL          ← group title row (expandable)
-  HEADER       ← subtitle / date row
-  SECTION_A    ← first section header (expandable)
+LABEL          ← group title row (expandable) — text from item.label
+  HEADER       ← subtitle / date row — text from item.header
+  SECTION_A    ← first section header (expandable) — text from item.label
     GRID items ← images and videos
-  SECTION_B    ← second section header (expandable)
+  SECTION_B    ← second section header (expandable) — text from item.label
     GRID items ← documents (PDF, EML, images)
 ```
 
@@ -111,26 +135,28 @@ Each group is a flat list of `MultiTypeItem` objects. Build them in order:
 ```kotlin
 fun buildMyList(): List<MultiTypeItem> = buildList {
 
-    // 1. Label row (the expandable group title)
+    // 1. Label row — expandable group title
     add(MultiTypeItem(
         type = MultiViewType.LABEL,
         id = "group-01",
+        label = "Group 01",       // displayed as the group title
         isExpanded = true,
         isVisible = true
     ))
 
-    // 2. Header row (subtitle / date)
+    // 2. Header row — subtitle / date shown below the label
     add(MultiTypeItem(
         type = MultiViewType.HEADER,
         id = "group-01",
-        header = "June 9, 2025",
+        header = "June 9, 2025",  // displayed as the subtitle
         isVisible = true
     ))
 
-    // 3. Section A header
+    // 3. Section A header — expandable, label is the section title
     add(MultiTypeItem(
         type = MultiViewType.SECTION_A,
         id = "group-01",
+        label = "Photos",         // displayed as the section A heading
         isExpanded = true,
         isVisible = true
     ))
@@ -153,10 +179,11 @@ fun buildMyList(): List<MultiTypeItem> = buildList {
         isVisible = true
     ))
 
-    // 5. Section B header
+    // 5. Section B header — expandable, label is the section title
     add(MultiTypeItem(
         type = MultiViewType.SECTION_B,
         id = "group-01",
+        label = "Documents",      // displayed as the section B heading
         isExpanded = true,
         isVisible = true
     ))
@@ -176,18 +203,19 @@ fun buildMyList(): List<MultiTypeItem> = buildList {
 
 ### MultiTypeItem fields
 
-| Field | Type | Description |
-|---|---|---|
-| `type` | `Int` | Row type — use `MultiViewType` constants |
-| `id` | `String?` | Group identifier — links all rows of the same group |
-| `isExpanded` | `Boolean?` | Expanded state for LABEL / SECTION rows |
-| `header` | `String?` | Text shown in HEADER rows |
-| `mediaKind` | `MediaKind` | Grid content kind: `IMAGE`, `VIDEO`, `DOCUMENT`, `NONE` |
-| `itemUrl` | `String?` | URL or file path for grid items |
-| `name` | `String?` | Display name (used for documents) |
-| `imageIndex` | `Int?` | Column position within the group (used for grid spacing) |
-| `isVisible` | `Boolean?` | Controls visibility; set `false` for collapsed children |
-| `isSelected` | `Boolean` | Selection state in delete mode (managed by adapter) |
+| Field | Type | Used by | Description |
+|---|---|---|---|
+| `type` | `Int` | all | Row type — use `MultiViewType` constants |
+| `id` | `String?` | all | Group identifier — links all rows of the same group |
+| `label` | `String?` | LABEL, SECTION_A, SECTION_B | Display text for the row heading |
+| `isExpanded` | `Boolean?` | LABEL, SECTION_A, SECTION_B | Expanded state; collapsed hides all child rows |
+| `header` | `String?` | HEADER | Subtitle / date text shown under the label |
+| `mediaKind` | `MediaKind` | GRID | Content kind: `IMAGE`, `VIDEO`, `DOCUMENT`, `NONE` |
+| `itemUrl` | `String?` | GRID | URL or file path for the media item |
+| `name` | `String?` | GRID | Display filename (shown on DOCUMENT cells) |
+| `imageIndex` | `Int?` | GRID | Column position within the group (used for grid spacing) |
+| `isVisible` | `Boolean?` | all | Controls visibility; `false` hides the row (collapsed children) |
+| `isSelected` | `Boolean` | GRID | Selection state in delete mode — managed by the adapter |
 
 ### MultiViewType constants
 
@@ -222,10 +250,10 @@ manager = MultiTypeRecyclerManager(
 
 | Parameter | Default | Description |
 |---|---|---|
-| `pageSize` | 50 | Items loaded on initial load and each scroll trigger |
-| `phoneGridColumns` | 3 | Grid span count on phones (screen width < 600dp) |
-| `tabletGridColumns` | 4 | Grid span count on tablets (screen width ≥ 600dp) |
-| `scrollPrefetchThreshold` | 5 | Items before end of list that triggers next page load |
+| `pageSize` | `50` | Items loaded on initial load and each scroll trigger |
+| `phoneGridColumns` | `3` | Grid span count on phones (screen width < 600dp) |
+| `tabletGridColumns` | `4` | Grid span count on tablets (screen width ≥ 600dp) |
+| `scrollPrefetchThreshold` | `5` | Items before end of list that triggers next page load |
 | `showScrollbar` | `true` | Whether to show a scrollbar on the right edge |
 
 ---
@@ -238,14 +266,18 @@ Pass a `MultiTypeTheme` to `MultiTypeAdapter` to customise colours and icons:
 adapter = MultiTypeAdapter(
     listener = this,
     theme = MultiTypeTheme(
-        // colours
-        itemBackground        = "#E8F0FE".toColorInt(), // base — cascades to all rows
+        // base colour — cascades to all row backgrounds unless individually overridden
+        itemBackground        = "#E8F0FE".toColorInt(),
+
+        // text colours
         labelTextColor        = "#1A73E8".toColorInt(),
         headerTextColor       = "#555555".toColorInt(),
         sectionLabelTextColor = "#222222".toColorInt(),
+
+        // card background inside each grid cell
         gridCardBackground    = Color.WHITE,
 
-        // override individual rows (optional)
+        // optionally override individual row backgrounds
         labelRowBackground    = "#FFFFFF".toColorInt(),
         sectionHeaderBackground = "#F5F5F5".toColorInt(),
     )
@@ -258,9 +290,9 @@ adapter = MultiTypeAdapter(
 
 | Field | Default | Applies to |
 |---|---|---|
-| `labelTextColor` | `Color.BLACK` | Group title text |
-| `headerTextColor` | `Color.BLACK` | Header / date text |
-| `sectionLabelTextColor` | `Color.BLACK` | Section A / B label text |
+| `labelTextColor` | `Color.BLACK` | LABEL row text |
+| `headerTextColor` | `Color.BLACK` | HEADER row text |
+| `sectionLabelTextColor` | `Color.BLACK` | SECTION_A / SECTION_B label text |
 
 **Backgrounds** — all cascade from `itemBackground`
 
@@ -268,9 +300,9 @@ adapter = MultiTypeAdapter(
 |---|---|---|
 | `itemBackground` | `Color.TRANSPARENT` | Base — sets all surfaces unless overridden |
 | `listBackground` | `itemBackground` | RecyclerView background |
-| `labelRowBackground` | `itemBackground` | Label row background |
-| `headerRowBackground` | `itemBackground` | Header row background |
-| `sectionHeaderBackground` | `itemBackground` | Section A/B header background |
+| `labelRowBackground` | `itemBackground` | LABEL row background |
+| `headerRowBackground` | `itemBackground` | HEADER row background |
+| `sectionHeaderBackground` | `itemBackground` | SECTION_A / SECTION_B header background |
 | `gridItemBackground` | `itemBackground` | Outer grid cell background |
 | `gridCardBackground` | `Color.WHITE` | CardView inside each grid cell |
 
@@ -298,7 +330,7 @@ Long-pressing any grid item fires `onLongPressDelete`. Implement delete mode in 
 adapter.setDeleteMode(true)
 adapter.setDeleteMode(false)  // also clears all selections
 
-// Know when selections change
+// React when selections change
 adapter.onSelectionChanged = { selectedCount ->
     btnDelete.visibility = if (selectedCount > 0) View.VISIBLE else View.GONE
     btnDelete.text = "Delete Selected ($selectedCount)"
@@ -322,7 +354,7 @@ btnDelete.setOnClickListener {
 |---|---|
 | `adapter.enableDelete` | `true` when delete mode is active |
 | `adapter.setDeleteMode(Boolean)` | Enable or disable delete mode |
-| `adapter.onSelectionChanged` | Callback fired with updated count on every tap |
+| `adapter.onSelectionChanged` | Lambda fired with updated selected count on every tap |
 | `adapter.getSelectedItemCount()` | Returns how many items are currently selected |
 | `adapter.deleteSelectedItems()` | Removes selected items and exits delete mode |
 
@@ -331,10 +363,10 @@ btnDelete.setOnClickListener {
 ## Updating the List
 
 ```kotlin
-// Replace entire dataset
+// Replace entire dataset (resets pagination)
 manager.loadItems(newList)
 
-// Update in-place (preserves pagination position)
+// Update in-place (preserves current pagination position)
 adapter.updateListItems(newList)
 
 // Clear all items
@@ -345,13 +377,13 @@ adapter.clear()
 
 ## Callbacks
 
-Implement `MultiTypeAdapterCallback` or individual interfaces:
+Implement `MultiTypeAdapterCallback` or the individual `fun interface` types:
 
 ```kotlin
 // All three in one interface
 class MyActivity : AppCompatActivity(), MultiTypeAdapterCallback { ... }
 
-// Or individual fun interfaces
+// Or as an anonymous object
 val adapter = MultiTypeAdapter(
     listener = object : MultiTypeAdapterCallback {
         override fun onItemClick(position: Int, list: List<MultiTypeItem>) { }
@@ -367,6 +399,8 @@ val adapter = MultiTypeAdapter(
 | `onSecondaryItemClick(position, list)` | A DOCUMENT grid cell is tapped |
 | `onLongPressDelete(item)` | Any grid cell is long-pressed |
 
+`position` is the index within the filtered sub-list for that group and media kind, not the adapter position. `list` contains only the relevant items (images+videos or documents) for that group.
+
 ---
 
 ## Get the Code from GitHub
@@ -378,13 +412,13 @@ git clone https://github.com/DevTarun376/RV-MultiType-View-Tarun.git
 cd RV-MultiType-View-Tarun
 ```
 
-Open the project in Android Studio, let Gradle sync, then run the **app** module on any device or emulator to see a working sample. The sample app in `app/` wires up a pre-populated list so you can see pagination, expand/collapse, delete mode, and theming all in one place.
+Open the project in Android Studio, let Gradle sync, then run the **app** module on any device or emulator to see a working sample. The sample app in `app/` wires up 1,000 pre-populated groups so you can see pagination, expand/collapse, delete mode, and theming all in one place.
 
 ---
 
-## Specific Use Case — Photo Gallery Grouped by Date
+## Complete Example — Photo Gallery Grouped by Date
 
-The example below shows a complete, self-contained photo gallery screen. Each group is one day; Section A holds photos and Section B holds shared documents for that day.
+A full activity showing all features together. Each group is one day; Section A holds photos and videos, Section B holds documents.
 
 ```kotlin
 class GalleryActivity : AppCompatActivity(), MultiTypeAdapterCallback {
@@ -432,7 +466,7 @@ class GalleryActivity : AppCompatActivity(), MultiTypeAdapterCallback {
         binding.btnDelete.setOnClickListener {
             AlertDialog.Builder(this)
                 .setTitle("Delete")
-                .setMessage("Remove ${adapter.getSelectedItemCount()} photo(s)?")
+                .setMessage("Remove ${adapter.getSelectedItemCount()} item(s)?")
                 .setPositiveButton("Delete") { _, _ -> adapter.deleteSelectedItems() }
                 .setNegativeButton("Cancel", null)
                 .show()
@@ -440,22 +474,22 @@ class GalleryActivity : AppCompatActivity(), MultiTypeAdapterCallback {
     }
 
     private fun buildGalleryItems(): List<MultiTypeItem> = buildList {
-        // ── Day 1 ──────────────────────────────────────────────
-        add(MultiTypeItem(type = MultiViewType.LABEL,     id = "day-1", isExpanded = true,  isVisible = true))
-        add(MultiTypeItem(type = MultiViewType.HEADER,    id = "day-1", header = "June 9, 2025", isVisible = true))
-        add(MultiTypeItem(type = MultiViewType.SECTION_A, id = "day-1", isExpanded = true,  isVisible = true))
+        // ── Day 1 ──────────────────────────────────────────────────────────────
+        add(MultiTypeItem(type = MultiViewType.LABEL,     id = "day-1", label = "Day 1",     isExpanded = true, isVisible = true))
+        add(MultiTypeItem(type = MultiViewType.HEADER,    id = "day-1", header = "June 9, 2025",               isVisible = true))
+        add(MultiTypeItem(type = MultiViewType.SECTION_A, id = "day-1", label = "Photos",    isExpanded = true, isVisible = true))
         add(MultiTypeItem(type = MultiViewType.GRID, id = "day-1", mediaKind = MediaKind.IMAGE,
             itemUrl = "https://example.com/day1_photo1.jpg", imageIndex = 0, isVisible = true))
         add(MultiTypeItem(type = MultiViewType.GRID, id = "day-1", mediaKind = MediaKind.VIDEO,
-            itemUrl = "https://example.com/day1_video.mp4", imageIndex = 1, isVisible = true))
-        add(MultiTypeItem(type = MultiViewType.SECTION_B, id = "day-1", isExpanded = true,  isVisible = true))
+            itemUrl = "https://example.com/day1_video.mp4",  imageIndex = 1, isVisible = true))
+        add(MultiTypeItem(type = MultiViewType.SECTION_B, id = "day-1", label = "Documents", isExpanded = true, isVisible = true))
         add(MultiTypeItem(type = MultiViewType.GRID, id = "day-1", mediaKind = MediaKind.DOCUMENT,
             itemUrl = "notes.pdf", name = "notes.pdf", imageIndex = 0, isVisible = true))
 
-        // ── Day 2 ──────────────────────────────────────────────
-        add(MultiTypeItem(type = MultiViewType.LABEL,     id = "day-2", isExpanded = true,  isVisible = true))
-        add(MultiTypeItem(type = MultiViewType.HEADER,    id = "day-2", header = "June 8, 2025", isVisible = true))
-        add(MultiTypeItem(type = MultiViewType.SECTION_A, id = "day-2", isExpanded = true,  isVisible = true))
+        // ── Day 2 ──────────────────────────────────────────────────────────────
+        add(MultiTypeItem(type = MultiViewType.LABEL,     id = "day-2", label = "Day 2",     isExpanded = true, isVisible = true))
+        add(MultiTypeItem(type = MultiViewType.HEADER,    id = "day-2", header = "June 8, 2025",               isVisible = true))
+        add(MultiTypeItem(type = MultiViewType.SECTION_A, id = "day-2", label = "Photos",    isExpanded = true, isVisible = true))
         add(MultiTypeItem(type = MultiViewType.GRID, id = "day-2", mediaKind = MediaKind.IMAGE,
             itemUrl = "https://example.com/day2_photo1.jpg", imageIndex = 0, isVisible = true))
         add(MultiTypeItem(type = MultiViewType.GRID, id = "day-2", mediaKind = MediaKind.IMAGE,
@@ -480,11 +514,11 @@ class GalleryActivity : AppCompatActivity(), MultiTypeAdapterCallback {
 
 ---
 
-## Flexibility & How to Extend on Your Side
+## Flexibility & How to Extend
 
 MultiTypeView is intentionally thin: the library owns the adapter, paginator, and ViewHolder wiring — everything else is yours to control.
 
-### Swap in your own data model
+### Map your own data model
 
 `MultiTypeItem` is a plain data class. Map your domain objects to it in a single function:
 
@@ -499,7 +533,7 @@ fun MyPhoto.toMultiTypeItem(groupId: String, index: Int) = MultiTypeItem(
 )
 ```
 
-Call that mapper in a `buildList {}` block and hand the result to `manager.loadItems()`. The library never touches your model layer.
+Call that mapper in a `buildList {}` block and pass the result to `manager.loadItems()`. The library never touches your model layer.
 
 ### Drive the list from a ViewModel
 
@@ -511,31 +545,15 @@ viewModel.galleryState.observe(this) { items ->
 }
 ```
 
-### Plug in a custom image loader
-
-All image URLs pass through Glide inside the library's ViewHolder. If you need headers, transformations, or a different CDN, subclass or wrap the adapter and override `onBindViewHolder` for `MultiViewType.GRID` before calling `super`.
-
 ### Add new row types
 
 The adapter maps `type` integers to ViewHolder classes. To add a custom row (e.g. an ad banner or a date-divider):
 
 1. Define a new constant outside the `MultiViewType` range (e.g. `const val AD_BANNER = 10`).
 2. Subclass `MultiTypeAdapter`, override `getItemViewType`, `onCreateViewHolder`, and `onBindViewHolder` for your new type.
-3. Pass your subclass to `MultiTypeRecyclerManager` as normal — the paginator and expand/collapse logic are unaffected.
+3. Pass your subclass to `MultiTypeRecyclerManager` — the paginator and expand/collapse logic are unaffected.
 
-### Theme per-group at runtime
-
-`MultiTypeTheme` is a data class — create multiple instances and swap the adapter's theme between groups for striped or color-coded lists:
-
-```kotlin
-val themes = mapOf("work" to workTheme, "personal" to personalTheme)
-override fun onItemClick(position: Int, list: List<MultiTypeItem>) {
-    val groupId = list[position].id ?: return
-    adapter.updateTheme(themes[groupId] ?: defaultTheme)
-}
-```
-
-### Summary of extension points
+### Extension points summary
 
 | What you want to change | Where to do it |
 |---|---|
@@ -544,5 +562,6 @@ override fun onItemClick(position: Int, list: List<MultiTypeItem>) {
 | Pagination trigger distance | `MultiTypeConfig.scrollPrefetchThreshold` |
 | Column count per screen size | `MultiTypeConfig.phoneGridColumns` / `tabletGridColumns` |
 | Colors, icons, backgrounds | `MultiTypeTheme` fields |
+| Row heading text | `MultiTypeItem.label` on LABEL / SECTION_A / SECTION_B items |
 | New row types | Subclass `MultiTypeAdapter` |
 | Callbacks / navigation | `MultiTypeAdapterCallback` implementation |

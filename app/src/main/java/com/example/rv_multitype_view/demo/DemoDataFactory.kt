@@ -21,6 +21,7 @@ object DemoDataFactory {
             addGroup(
                 list = this,
                 id = id,
+                label = id,
                 date = DATES[i % DATES.size],
                 isExpanded = i % 3 != 1,
                 sectionAExpanded = i % 4 != 2,
@@ -41,6 +42,7 @@ object DemoDataFactory {
     private fun addGroup(
         list: MutableList<MultiTypeItem>,
         id: String,
+        label: String,
         date: String,
         isExpanded: Boolean,
         sectionAExpanded: Boolean,
@@ -52,6 +54,7 @@ object DemoDataFactory {
         add(MultiTypeItem(
             type = MultiViewType.LABEL,
             id = id,
+            label = label,
             isExpanded = isExpanded,
             isVisible = true
         ))
@@ -66,6 +69,7 @@ object DemoDataFactory {
         add(MultiTypeItem(
             type = MultiViewType.SECTION_A,
             id = id,
+            label = "Section A",
             isExpanded = sectionAExpanded,
             isVisible = isExpanded
         ))
@@ -95,6 +99,7 @@ object DemoDataFactory {
         add(MultiTypeItem(
             type = MultiViewType.SECTION_B,
             id = id,
+            label = "Section B",
             isExpanded = sectionBExpanded,
             isVisible = isExpanded
         ))

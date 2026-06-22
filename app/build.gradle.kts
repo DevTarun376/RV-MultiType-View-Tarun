@@ -37,7 +37,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":recyclerview-multitype-view"))
+//    implementation(project(":recyclerview-multitype-view"))
     implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.constraintlayout)
@@ -47,5 +47,5 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.junit)
 
-//    implementation("com.github.DevTarun376:RV-MultiType-View-Tarun:1.0.0")
+    implementation("com.github.DevTarun376:RV-MultiType-View-Tarun:1.1.0")
 }

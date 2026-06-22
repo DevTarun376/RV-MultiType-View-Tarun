@@ -1,13 +1,23 @@
-# MultiTypeView
+# MultiTypeView — Android RecyclerView Multi-Type Adapter Library
 
-A RecyclerView library for displaying grouped, multi-type lists with images, videos, and documents. Supports expand/collapse sections, pagination, delete mode with confirmation, and full visual theming.
+**A Kotlin Android library for building grouped, multi-type RecyclerView lists with images, videos, and documents.** Supports expand/collapse sections, infinite scroll pagination, delete mode with confirmation, and full visual theming — with zero ANR and zero OOM on 1000+ item lists.
+
+[![JitPack](https://jitpack.io/v/DevTarun376/RV-MultiType-View-Tarun.svg)](https://jitpack.io/#DevTarun376/RV-MultiType-View-Tarun)
+[![Min SDK](https://img.shields.io/badge/minSdk-29-brightgreen)](https://developer.android.com/about/versions/10)
+[![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+
+### Features
+- **Multi-type ViewHolders** — Label, Header, Section, and Grid rows with dedicated recycling per type
+- **Paginated loading** — only visible items stay in memory; next page loads automatically on scroll
+- **Expand / collapse sections** — animated, without resetting the paginator
+- **Delete mode** — long-press to enter, checkbox selection, DiffUtil-animated removal
+- **Full theming** — colors, icons, backgrounds via `MultiTypeTheme`
+- **Glide image loading** — images and video thumbnails loaded off the main thread
+- **Tablet-aware grid** — configurable column count for phones and tablets
 
 ---
 
-<!-- DEMO VIDEO — replace the line below with your screen recording -->
-<!-- Example: ![Demo](assets/demo.gif) or paste the GitHub-uploaded MP4 URL -->
-
-<img width="216" height="480" alt="gif" src="https://github.com/user-attachments/assets/f2678b72-9fcd-47af-8307-9143cc7d90b4" />
+<img width="216" height="480" alt="MultiTypeView Android RecyclerView demo showing grouped media list with expand/collapse sections, images and videos in a grid layout" src="https://github.com/user-attachments/assets/f2678b72-9fcd-47af-8307-9143cc7d90b4" />
 
 ---
 
@@ -565,3 +575,42 @@ The adapter maps `type` integers to ViewHolder classes. To add a custom row (e.g
 | Row heading text | `MultiTypeItem.label` on LABEL / SECTION_A / SECTION_B items |
 | New row types | Subclass `MultiTypeAdapter` |
 | Callbacks / navigation | `MultiTypeAdapterCallback` implementation |
+
+---
+
+## Requirements
+
+| Requirement | Minimum |
+|---|---|
+| Android SDK | API 29 (Android 10) |
+| Kotlin | 1.8+ |
+| RecyclerView | 1.3+ |
+| Glide | 4.x |
+
+---
+
+## License
+
+```
+MIT License
+
+Copyright (c) 2026 Tarun Kumar
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```

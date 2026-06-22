@@ -43,7 +43,7 @@ afterEvaluate {
                 from(components["release"])
                 groupId = "com.github.DevTarun376"
                 artifactId = "recyclerview-multitype-view"
-                version = "1.0.0"
+                version = "1.1.0"
             }
         }
     }

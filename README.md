@@ -39,7 +39,7 @@ dependencyResolutionManagement {
 
 ```kotlin
 dependencies {
-    implementation("com.github.DevTarun376:RV-MultiType-View-Tarun:1.0.0")
+    implementation("com.github.DevTarun376:RV-MultiType-View-Tarun:1.1.0")
 }
 ```
 

@@ -17,7 +17,7 @@
 
 ---
 
-<img width="216" height="480" alt="MultiTypeView Android RecyclerView demo showing grouped media list with expand/collapse sections, images and videos in a grid layout" src="https://github.com/user-attachments/assets/f2678b72-9fcd-47af-8307-9143cc7d90b4" />
+<img width="216" height="480" alt="gif" src="https://github.com/user-attachments/assets/f2678b72-9fcd-47af-8307-9143cc7d90b4" />
 
 ---
 

@@ -69,6 +69,35 @@ List updates use `DiffUtil.ItemCallback` to calculate the minimal set of inserti
 **Expand/collapse without re-pagination**
 Expanding or collapsing a section does not reset the paginator back to page 1. The user's scroll position is preserved and only the affected rows are added or removed from the visible list.
 
+**Collapse-safe pagination — the next group is never lost**
+This is the subtlest part of the architecture and worth calling out explicitly.
+
+Say you have Group A with 1,000 images and `pageSize = 50`. On first load, only the first 50 items are placed in the RecyclerView — all from Group A. Group B, which starts at position 1,001 in the raw list, has not been paged in yet.
+
+If the user collapses Group A, all 1,000 of its grid items flip to `isVisible = false` inside `ExpandController`. The visible list shrinks dramatically: Group A is now just one header row, and Group B's items are now at positions 1 and 2 in the visible list.
+
+Without special handling, the paginator would re-source from this new short visible list and cap `loadedCount` at 50 — which would *still* work here. But the dangerous case is when the user has already scrolled partway through Group A, so `currentList` has grown to, say, 200 items. After collapsing, the new visible list might only have 52 items total. If the paginator naively reset `loadedCount` to `pageSize` (50), it would show 50 items — fine — but if it reset to 0, Group B would be missing entirely.
+
+The algorithm that prevents this is a single line in `handleExpandToggle`:
+
+```kotlin
+val alreadyLoaded = currentList.size          // how many rows were visible before the toggle
+paginator.setSource(visibleItems, loadAtLeast = alreadyLoaded)
+```
+
+Inside `Paginator.setSource`:
+
+```kotlin
+loadedCount = minOf(maxOf(pageSize, loadAtLeast), list.size)
+```
+
+This guarantees:
+- `loadedCount` is at least `pageSize` (you never show fewer items than a full page)
+- `loadedCount` is at least `alreadyLoaded` (you never show fewer items than were visible before the collapse)
+- `loadedCount` never exceeds the new visible list size (you never read past the end)
+
+The result: after collapsing Group A, the paginator's window covers the *entire* new (shorter) visible list in one shot. Group B, which was unreachable before the collapse, is now immediately visible — no scroll needed, no pagination reset, no data loss.
+
 | Scenario | Result |
 |---|---|
 | 1,000 groups × 6 media items each | Smooth scroll, no lag |
